@@ -9,4 +9,6 @@ import fr.julien.spotify_clone_back.usercontentext.domain.User;
 public interface UserMapper {
 
     ReadUserDto toReadUserDto(User entity);
+
+    public ReadUserDto readUserDTOToUser(User user);
 }
