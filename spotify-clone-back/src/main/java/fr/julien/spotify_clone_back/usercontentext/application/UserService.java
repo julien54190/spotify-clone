@@ -24,33 +24,32 @@ public class UserService {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
     }
-
-    public void syncWithIdp(OAuth2User oAuth2User) {
-        Map<String, Object> attributes = oAuth2User.getAttributes();
+    public void syncWithIdp(OAuth2User oAuth2User){
+        Map<String, Object> attributes =  oAuth2User.getAttributes();
         User user = mapOauth2AttributesToUser(attributes);
         Optional<User> existingUser = userRepository.findOneByEmail(user.getEmail());
-        if (existingUser.isPresent()) {
-            if (attributes.get("updated_at") != null) {
-                Instant dbLastModifiedDate = existingUser.orElseThrow().getLastModifiedDate();
-                Instant idpModifiedDate;
-                if(attributes.get("updated_at") instanceof Instant) {
-                    idpModifiedDate = (Instant) attributes.get("updated_at");
+        if (existingUser.isPresent()){
+            if (attributes.get("upated_at") != null){
+                Instant dbLastModifieDate = existingUser.orElseThrow().getLastModifiedDate();
+                Instant idpModifieDate;
+                if (attributes.get("updated_at") instanceof Instant){
+                    idpModifieDate = (Instant)attributes.get("updated_at");
                 } else {
-                    idpModifiedDate = Instant.ofEpochSecond((Integer) attributes.get("updated_at"));
+                    idpModifieDate = Instant.ofEpochSecond((Integer) attributes.get("updated_at"));
                 }
-                if(idpModifiedDate.isAfter(dbLastModifiedDate)) {
+                if (idpModifieDate.isAfter(dbLastModifieDate)){
                     updateUser(user);
                 }
-            }
+            } 
         } else {
             userRepository.saveAndFlush(user);
         }
     }
 
-    public ReadUserDto getAuthenticatedUserFromSecurityContext() {
+    public ReadUserDto getAuthenticateUserFromSecurityContext(){
         OAuth2User principal = (OAuth2User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = mapOauth2AttributesToUser(principal.getAttributes());
-        return userMapper.readUserDTOToUser(user);
+        return userMapper.toReadUserDto(user);
     }
 
     private void updateUser(User user) {
@@ -64,28 +63,24 @@ public class UserService {
             userRepository.saveAndFlush(userToUpdate);
         }
     }
-
     private User mapOauth2AttributesToUser(Map<String, Object> attributes) {
         User user = new User();
         String sub = String.valueOf(attributes.get("sub"));
 
         String username = null;
 
-        if (attributes.get("preferred_username") != null) {
-            username = ((String) attributes.get("preferred_username")).toLowerCase();
+        if(attributes.get("preferred_username") != null){
+            username = ((String)attributes.get("preferred_username")).toLowerCase();
         }
-
-        if (attributes.get("given_name") != null) {
+        if (attributes.get("given_name") != null){
             user.setFirstName((String) attributes.get("given_name"));
-        } else if (attributes.get("name") != null) {
+        } else if (attributes.get("name") != null){
             user.setFirstName((String) attributes.get("name"));
         }
-
-        if (attributes.get("family_name") != null) {
+        if (attributes.get("family_name")!= null){
             user.setLastName((String) attributes.get("family_name"));
         }
-
-        if (attributes.get("email") != null) {
+        if (attributes.get("email") != null){
             user.setEmail((String) attributes.get("email"));
         } else if (sub.contains("|") && (username != null && username.contains("@"))) {
             user.setEmail(username);
@@ -93,19 +88,11 @@ public class UserService {
             user.setEmail(sub);
         }
 
-        if (attributes.get("picture") != null) {
+        if(attributes.get("picture") != null){
             user.setImageUrl((String) attributes.get("picture"));
         }
-
         return user;
-    }
 
-    public Optional<ReadUserDto> getByEmail(String email) {
-        Optional<User> oneByEmail = userRepository.findOneByEmail(email);
-        return oneByEmail.map(userMapper::readUserDTOToUser);
-    }
-
-    public boolean isAuthenticated() {
-        return !SecurityContextHolder.getContext().getAuthentication().getPrincipal().equals("anonymousUser");
     }
 }
+

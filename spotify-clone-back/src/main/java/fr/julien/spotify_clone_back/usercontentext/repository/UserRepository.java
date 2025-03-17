@@ -8,7 +8,7 @@ import fr.julien.spotify_clone_back.usercontentext.domain.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    Optional<User> findByUsername(String email);
-
     Optional<User> findOneByEmail(String email);
+
+
 }
