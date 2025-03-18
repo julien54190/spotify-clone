@@ -3,7 +3,6 @@ package fr.julien.spotify_clone_back.catalogcontext.domain;
 import java.io.Serializable;
 import java.util.UUID;
 
-import fr.julien.spotify_clone_back.catalogcontext.domain.FavoriteID;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

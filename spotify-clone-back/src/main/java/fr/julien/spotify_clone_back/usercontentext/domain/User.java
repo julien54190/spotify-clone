@@ -37,6 +37,7 @@ public class User extends AbstractAuditingEntity<Long> {
     @Column(name = "image_url")
     private String imageUrl;
 
+    @Override
     public Long getId() {
         return id;
     }

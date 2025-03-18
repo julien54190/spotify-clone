@@ -13,6 +13,7 @@ import fr.julien.spotify_clone_back.usercontentext.domain.User;
 import fr.julien.spotify_clone_back.usercontentext.mapper.UserMapper;
 import fr.julien.spotify_clone_back.usercontentext.repository.UserRepository;
 
+
 @Service
 public class UserService {
 
@@ -29,11 +30,11 @@ public class UserService {
         User user = mapOauth2AttributesToUser(attributes);
         Optional<User> existingUser = userRepository.findOneByEmail(user.getEmail());
         if (existingUser.isPresent()){
-            if (attributes.get("upated_at") != null){
+            if (attributes.get("updated_at") != null){
                 Instant dbLastModifieDate = existingUser.orElseThrow().getLastModifiedDate();
                 Instant idpModifieDate;
-                if (attributes.get("updated_at") instanceof Instant){
-                    idpModifieDate = (Instant)attributes.get("updated_at");
+                if (attributes.get("updated_at") instanceof Instant instant){
+                    idpModifieDate = instant;
                 } else {
                     idpModifieDate = Instant.ofEpochSecond((Integer) attributes.get("updated_at"));
                 }

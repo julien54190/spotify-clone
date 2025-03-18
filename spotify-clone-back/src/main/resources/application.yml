@@ -3,6 +3,7 @@ logging:
     ROOT: info
     '[org.hibernate.SQL]': DEBUG
     '[fr.julien.spotify_clone_back]': DEBUG
+    '[org.springframework.core.env]': DEBUG
 
 spring:
   profiles:
@@ -47,3 +48,6 @@ okta:
       issuer: ${AUTH0_ISSUER}
       client-id: ${AUTH0_CLIENT_ID}
       client-secret: ${AUTH0_CLIENT_SECRET}
+
+
+
